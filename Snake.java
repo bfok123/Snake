@@ -1,14 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package snake;
-
-/**
- *
- * @author Brandon
- */
 import javax.swing.JPanel;
 import java.util.*;
 
@@ -16,8 +5,8 @@ public class Snake extends JPanel {
     private int x, y, velX, velY, oldX, oldY;
     
     public Snake() {
-        x = 0;
-        y = 29;
+        x = 220;
+        y = 239;
         velX = 0;
         velY = 0;
         oldX = x;

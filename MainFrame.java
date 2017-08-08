@@ -1,14 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package snake;
-
-/**
- *
- * @author Brandon
- */
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -23,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 public class MainFrame extends JPanel implements KeyListener, ActionListener {
-    Timer t = new Timer(5, this);
+    Timer t = new Timer(50, this);
     Snake snake = new Snake();
     Food food = new Food();
     List<Snake> snakeBody = new ArrayList(0);
@@ -31,22 +20,24 @@ public class MainFrame extends JPanel implements KeyListener, ActionListener {
     int lastKeyCode;
     
     public MainFrame(){
+        JFrame mainFrame = new JFrame("Snake");
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(456, 508);
+        mainFrame.add(this);
+        mainFrame.addKeyListener(this);
+    	
         t.start();
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         points = 0;
         snakeBody.add(snake);
+        
+        mainFrame.setVisible(true);
     }   
      
     public static void main(String[] args){
-        MainFrame frame = new MainFrame();
-        JFrame mainFrame = new JFrame("Snake");
-        mainFrame.setVisible(true);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(456, 508);
-        mainFrame.add(frame);
-        mainFrame.addKeyListener(frame);
+        new MainFrame();
     }
   
     @Override
@@ -103,28 +94,35 @@ public class MainFrame extends JPanel implements KeyListener, ActionListener {
         }
         
         if (isDead) {
-            points = 0;
-            snakeBody.removeAll(snakeBody);
-            snake.setX(0);
-            snake.setY(29);
-            snake.setVelX(0);
-            snake.setVelY(0);
-            snake.setOldX(0);
-            snake.setOldY(0);
-            snakeBody.add(snake);
+            resetGame();
         }
+    }
+    
+    // reset points to 0, put snake in middle, clear snakeBody
+    public void resetGame() {
+    	points = 0;
+        snakeBody.removeAll(snakeBody);
+        snake.setX(220);
+        snake.setY(239);
+        snake.setVelX(0);
+        snake.setVelY(0);
+        snake.setOldX(0);
+        snake.setOldY(0);
+        snakeBody.add(snake);
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
-            Thread.sleep(50);
-        } catch(InterruptedException ie) { 
-        }
-        snake.setOldX(snake.getX());
-        snake.setOldY(snake.getY());
-        snake.setX(snake.getX() + snake.getVelX());
-        snake.setY(snake.getY() + snake.getVelY());
+    	int snakeX = snake.getX();
+    	int snakeY = snake.getY();
+    	int snakeVelX = snake.getVelX();
+    	int snakeVelY = snake.getVelY();
+    	
+        snake.setOldX(snakeX);
+        snake.setOldY(snakeY);
+        snake.setX(snakeX + snakeVelX);
+        snake.setY(snakeY + snakeVelY);
+        updateLastKeyCode(snakeVelX, snakeVelY);
         dead();
         repaint();
     }
@@ -134,42 +132,42 @@ public class MainFrame extends JPanel implements KeyListener, ActionListener {
         int c = e.getKeyCode();
         
         if (c == KeyEvent.VK_LEFT) {
+        	System.out.println("left");
             if ((snakeBody.size() > 1) && (lastKeyCode == KeyEvent.VK_RIGHT)) {
                 //do nothing if snake is greater than 1 in length and the user tries to go in the opposite direction
             } else {
                 snake.setVelX(-11);
                 snake.setVelY(0);
-                lastKeyCode = KeyEvent.VK_LEFT;
             }
         }
         
         if (c == KeyEvent.VK_UP) {
+        	System.out.println("up");
             if ((snakeBody.size() > 1) && (lastKeyCode == KeyEvent.VK_DOWN)) {
                 
             } else {
                 snake.setVelX(0);
                 snake.setVelY(-11);
-                lastKeyCode = KeyEvent.VK_UP;
             }
         }
         
         if (c == KeyEvent.VK_RIGHT) {
+        	System.out.println("right");
             if ((snakeBody.size() > 1) && (lastKeyCode == KeyEvent.VK_LEFT)) {
                 
             } else {
                 snake.setVelX(11);
                 snake.setVelY(0);
-                lastKeyCode = KeyEvent.VK_RIGHT;
             }
         }
         
         if (c == KeyEvent.VK_DOWN) {
+        	System.out.println("down");
             if ((snakeBody.size() > 1) && (lastKeyCode == KeyEvent.VK_UP)) {
        
             } else {
                 snake.setVelX(0);
                 snake.setVelY(11);
-                lastKeyCode = KeyEvent.VK_DOWN;
             }
         }
     }
@@ -179,4 +177,16 @@ public class MainFrame extends JPanel implements KeyListener, ActionListener {
     
     @Override
     public void keyReleased(KeyEvent e) {}
+    
+    public void updateLastKeyCode(int velX, int velY) {
+    	if(velX == 11) {
+    		lastKeyCode = KeyEvent.VK_RIGHT;
+    	} else if(velX == -11) {
+    		lastKeyCode = KeyEvent.VK_LEFT;
+    	} else if(velY == 11) {
+    		lastKeyCode = KeyEvent.VK_DOWN;
+    	} else if(velY == -11) {
+    		lastKeyCode = KeyEvent.VK_UP;
+    	}
+    }
 }
